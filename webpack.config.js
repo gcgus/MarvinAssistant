@@ -8,8 +8,8 @@ module.exports = {
     mode: 'development',
     entry: './Public/src/main.js',
     output: {
-        path: path.resolve(__dirname, './Public/build'),
-        publicPath: '/Public/build/',
+        path: path.resolve(__dirname, './Public/'),
+        publicPath: '/Public/',
         filename: 'build.js'
     },
     module: {

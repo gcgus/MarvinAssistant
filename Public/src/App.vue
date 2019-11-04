@@ -51,44 +51,46 @@
                 <td class="bubble">{{a.queryResult.queryText}}</td>
             </tr>
 
+
             <!-- Dialogflow messages -->
             <tr>
                 <td>
 
                     <!-- Bot message types / Speech -->
 
-                    <div v-if="a.outputAudio" class="bubble bot">
-                        {{a.outputAudio}}
-                    </div>
 
                     <!-- Google Assistant output -->
                     <div v-for="(r, index) in a.queryResult.fulfillmentMessages" :key="index">
 
-                        <div v-if="r.message == 'text'">
-                            <td class="bubble bot">{{r.text.text}}</td>
+                        <div v-if="r.text">
+                            <td class="bubble bot">{{r.text.text[0]}}</td>
                         </div>
 
-                        <div class="card" v-if="r.message=='card'">
-                            <img class="card-image" v-if="imageUri" :src="imageUri" :alt="imageTitle || title" />
+                        <div v-if="r.message=='card'">
+                            <td class="bubble bot">{{r.card.imageUrl}}</td>
+                        </div>
+
+                        <div class="card" v-if="r.message=='cards'">
+                            <img class="card-image" v-if="r.card.imageUrl" :src="r.card.imageUrl" :alt="'Broken Link'" />
                                 <div class="card-content">
-                                  <div class="card-title">{{r.title}}</div>
-                                  <div class="card-subtitle" v-if="r.subtitle">{{r.subtitle}}</div>
-                                  <div class="card-text" v-if="r.text">{{r.text}}</div>
+                                  <div class="card-title" v-if="r.card.title">{{r.card.title}}</div>
+                                  <div class="card-subtitle" v-if="r.card.subtitle">{{r.card.subtitle}}</div>
+                                  <div class="card-text" v-if="r.card.text">{{r.card.text}}</div>
                                 <slot></slot>
                               </div>
                         </div>
 
                         <!-- Bot message types / Card -->
-
-                        <div class="mdc-card" v-if="r.message == 'basic_card'">
-                            <img :title="r.image.accessibilityText" :alt="r.image.accessibilityText" class="mdc-card__media-item" :src="r.image.url" v-if="r.image">
+          
+                        <div class="mdc-card" v-if="r.message == 'cards'">
+                            <img :alt="'Error'" class="mdc-card__media-item" :src="r.card.imageUrl" v-if="r.card.imageUrl">
                             <section class="mdc-card__primary">
-                                <h1 class="mdc-card__title">{{r.title}}</h1>
+                                <h1 class="mdc-card__title">{{r.card.title}}</h1>
                                 <br>
-                                <h2 class="mdc-card__subtitle">{{r.subtitle}}</h2>
+                                <h2 class="mdc-card__subtitle">{{r.card.subtitle}}</h2>
                             </section>
                             <section class="mdc-card__supporting-text">
-                                {{r.formattedText}}
+                                {{r.card.text}}
                             </section>
                             <section class="mdc-card__actions" v-for="(button, index) in r.buttons" :key="index">
                                 <a class="mdc-button mdc-button--compact themed mdc-card__action" target="_blank" :href="button.openUrlAction.url">{{button.title}} <i class="material-icons openlink">open_in_new</i></a>
@@ -155,8 +157,8 @@
                         <!-- Bot message types / Google Suggestion Chip -->
 
                         <div v-if="r.unknown == true" class="google-chip chips">
-                            <a class="suggestion" :href="'https://www.google.com/search?q=' + r.text" target="_blank">
-                                Search for "{{r.text}}" on Google <i class="material-icons openlink">search</i>
+                            <a class="suggestion" :href="'https://www.google.com/search?q=' + a.queryResult.queryText" target="_blank">
+                                Search for "{{a.queryResult.queryText}}" on Google <i class="material-icons openlink">search</i>
                             </a>
                         </div>
 
